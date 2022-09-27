@@ -28,7 +28,7 @@ type Scorecard struct {
 }
 
 func main() {
-	f := openFile("all.csv")
+	f := openFile("1000_critical_projects.csv")
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	scanner.Scan()
@@ -43,10 +43,13 @@ func main() {
 		// the last column in the csv file is empty is the score
 		items := strings.Split(line, ",")
 		score := items[len(items)-1]
+		if score == "" {
+			continue
+		}
 		//convert the score to float
 		scoreFloat, err := strconv.ParseFloat(score, 64)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(fmt.Errorf("error converting score to float: %w %d %s", err, i, score))
 		}
 		wg.Add(1)
 		go func(dep string, score float64, criticality int) {

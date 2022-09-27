@@ -1,1 +1,67 @@
-{"repo":{"name":"github.com/OpenRA/OpenRA","criticalityScore":0.7097,"criticality":999},"score":5,"checks":[{"name":"Code-Review","score":9},{"name":"Maintained","score":10},{"name":"CII-Best-Practices"},{"name":"Vulnerabilities","score":10},{"name":"Signed-Releases"},{"name":"Branch-Protection","score":6},{"name":"Packaging","score":-1},{"name":"License","score":10},{"name":"Dangerous-Workflow","score":10},{"name":"Token-Permissions"},{"name":"SAST"},{"name":"Dependency-Update-Tool"},{"name":"Pinned-Dependencies","score":2},{"name":"Binary-Artifacts","score":10},{"name":"Security-Policy"},{"name":"Fuzzing"}]}
+{
+  "repo": {
+    "name": "github.com/OpenRA/OpenRA",
+    "criticalityScore": 0.7097,
+    "criticality": 999
+  },
+  "score": 5,
+  "checks": [
+    {
+      "name": "Code-Review",
+      "score": 9
+    },
+    {
+      "name": "Maintained",
+      "score": 10
+    },
+    {
+      "name": "CII-Best-Practices"
+    },
+    {
+      "name": "Vulnerabilities",
+      "score": 10
+    },
+    {
+      "name": "Signed-Releases"
+    },
+    {
+      "name": "Branch-Protection",
+      "score": 6
+    },
+    {
+      "name": "Packaging",
+      "score": -1
+    },
+    {
+      "name": "License",
+      "score": 10
+    },
+    {
+      "name": "Dangerous-Workflow",
+      "score": 10
+    },
+    {
+      "name": "Token-Permissions"
+    },
+    {
+      "name": "SAST"
+    },
+    {
+      "name": "Dependency-Update-Tool"
+    },
+    {
+      "name": "Pinned-Dependencies",
+      "score": 2
+    },
+    {
+      "name": "Binary-Artifacts",
+      "score": 10
+    },
+    {
+      "name": "Security-Policy"
+    },
+    {
+      "name": "Fuzzing"
+    }
+  ]
+}
