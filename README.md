@@ -6,8 +6,8 @@ the top 1000 critical projects on GitHub. The list of projects is taken from the
 ## How to run
 `go run main.go`
 
-## Results
-- [results.json](results.json)
+## Data
+- [results folder](./results)
 - [criticality_score.csv](all.csv)
 
 ## Why?

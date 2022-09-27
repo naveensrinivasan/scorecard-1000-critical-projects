@@ -32,8 +32,6 @@ func main() {
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	scanner.Scan()
-	results := []Scorecard{}
-	var syncMutex sync.Mutex
 	var wg sync.WaitGroup
 	var ops int64
 	for i := 0; i < 1000; i++ {
@@ -58,47 +56,19 @@ func main() {
 			if err != nil {
 				return
 			}
-			syncMutex.Lock()
-			defer syncMutex.Unlock()
 			scorecard.Repo.CriticalityScore = score
 			scorecard.Repo.Criticality = criticality
-			results = append(results, scorecard)
-		}(x, scoreFloat, i)
+			b, err := json.Marshal(scorecard)
+			if err != nil {
+				panic(err)
+			}
+			err = ioutil.WriteFile(fmt.Sprintf("results/%d.json", criticality), b, 0644)
+			if err != nil {
+				return
+			}
+		}(x, scoreFloat, i+1)
 	}
 	wg.Wait()
-	//serialize the results to a file
-	b, err := json.Marshal(results)
-	if err != nil {
-		panic(err)
-	}
-	err = ioutil.WriteFile("results.json", b, 0644)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func decodeJson(m map[string]interface{}) []string {
-	values := make([]string, 0, len(m))
-	for _, v := range m {
-		switch vv := v.(type) {
-		case map[string]interface{}:
-			for _, value := range decodeJson(vv) {
-				values = append(values, value)
-			}
-		case string:
-			values = append(values, vv)
-		case float64:
-			values = append(values, strconv.FormatFloat(vv, 'f', -1, 64))
-		case []interface{}:
-			// Arrays aren't currently handled, since you haven't indicated that we should
-			// and it's non-trivial to do so.
-		case bool:
-			values = append(values, strconv.FormatBool(vv))
-		case nil:
-			values = append(values, "nil")
-		}
-	}
-	return values
 }
 
 func openFile(filename string) *os.File {
