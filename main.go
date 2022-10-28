@@ -26,6 +26,14 @@ type Scorecard struct {
 		Score int    `json:"score,omitempty"`
 	} `json:"checks"`
 }
+type Result struct {
+	Maintained  int
+	CodeReview  int
+	Name        string
+	Criticality int
+}
+
+var results chan Result
 
 func main() {
 	f := openFile("1000_critical_projects.csv")
@@ -34,6 +42,8 @@ func main() {
 	scanner.Scan()
 	var wg sync.WaitGroup
 	var ops int64
+	results = make(chan Result)
+	go WriteToCSV()
 	for i := 0; i < 1000; i++ {
 		scanner.Scan()
 		line := scanner.Text()
@@ -65,13 +75,24 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			err = ioutil.WriteFile(fmt.Sprintf("results/%d.json", criticality), b, 0644)
+			err = os.WriteFile(fmt.Sprintf("results/%d.json", criticality), b, 0644)
+			r := Result{Name: dep, Criticality: criticality}
+			for _, check := range scorecard.Checks {
+				if check.Name == "Maintained" {
+					r.Maintained = check.Score
+				}
+				if check.Name == "Code-Review" {
+					r.CodeReview = check.Score
+				}
+			}
+			results <- r
 			if err != nil {
 				return
 			}
 		}(x, scoreFloat, i+1)
 	}
 	wg.Wait()
+	close(results)
 }
 
 func openFile(filename string) *os.File {
@@ -80,6 +101,32 @@ func openFile(filename string) *os.File {
 		log.Fatal(err)
 	}
 	return f
+}
+func WriteToCSV() {
+	f, err := os.Create("results.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	_, err = f.WriteString("Name,Maintained,CodeReview,Criticality\n")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for result := range results {
+		//convert the result to csv
+		csv := fmt.Sprintf("%s,%d,%d,%d", result.Name, result.Maintained, result.CodeReview, result.Criticality)
+		//write the csv to a file
+		//append to the file
+		f, err := os.OpenFile("results.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		if _, err := f.WriteString(csv + "\n"); err != nil {
+			log.Fatal(err)
+		}
+	}
+
 }
 
 // GetScore returns the scorecard score for a given repo.
