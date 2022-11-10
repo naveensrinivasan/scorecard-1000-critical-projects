@@ -44,7 +44,7 @@ func main() {
 	var ops int64
 	results = make(chan Result)
 	go WriteToCSV()
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		scanner.Scan()
 		line := scanner.Text()
 		//split the line by comma and take the first column
@@ -78,7 +78,7 @@ func main() {
 			err = os.WriteFile(fmt.Sprintf("results/%d.json", criticality), b, 0644)
 			r := Result{Name: dep, Criticality: criticality}
 			for _, check := range scorecard.Checks {
-				if check.Name == "Maintained" {
+				if check.Name == "Binary-Artifacts" {
 					r.Maintained = check.Score
 				}
 				if check.Name == "Code-Review" {
